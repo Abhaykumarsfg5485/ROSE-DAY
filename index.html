@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose Day for Anshika 🌹</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&family=Lora:ital@1&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <style>
+        :root {
+            --primary-red: #d00000;
+            --rose-pink: #ff85a1;
+            --cream-white: #fffaff;
+            --deep-maroon: #2d0a0a;
+            --soft-glow: rgba(255, 133, 161, 0.4);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fff0f3;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Rain Animation - Increased Density */
+        .magic-element {
+            position: fixed;
+            top: -10%;
+            z-index: 1000;
+            pointer-events: none;
+            animation: fall linear forwards;
+            filter: drop-shadow(0 0 5px var(--soft-glow));
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg) scale(0.5); opacity: 0; }
+            15% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(450deg) scale(1.3); opacity: 0; }
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(255,240,243,0.94) 0%, rgba(255,182,193,0.6) 100%),
+                        url('https://images.unsplash.com/photo-1518111326490-4497a61d6706?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(3.2rem, 14vw, 8rem);
+            color: var(--primary-red);
+            margin: 0;
+            line-height: 1.1;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .hero-subtitle {
+            font-family: 'Lora';
+            font-style: italic;
+            font-size: clamp(1rem, 4.5vw, 1.5rem);
+            color: #555;
+            margin-top: 15px;
+            padding: 0 10px;
+            font-weight: 500;
+        }
+
+        .rose-container {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .rose-trigger {
+            font-size: clamp(70px, 25vw, 110px);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 15px 25px rgba(208, 0, 0, 0.4));
+            animation: float 3.5s infinite ease-in-out;
+        }
+
+        .rose-trigger:active { transform: scale(0.9); }
+
+        .tap-hint {
+            font-size: 0.85rem;
+            color: var(--primary-red);
+            margin-top: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.2; transform: scale(0.95); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        #wish-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2rem, 9vw, 3.2rem);
+            color: var(--primary-red);
+            margin-top: 25px;
+            min-height: 70px;
+            opacity: 0;
+            transition: 1.2s;
+            padding: 0 15px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.05);
+        }
+
+        .letter-content {
+            width: 92%;
+            max-width: 850px;
+            margin: -50px auto 50px auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(45px, 10vw, 90px) clamp(25px, 6vw, 50px);
+            border-radius: 45px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 20;
+            display: none;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .story-para {
+            font-family: 'Lora', serif;
+            font-size: clamp(1.05rem, 4.8vw, 1.35rem);
+            line-height: 1.9;
+            text-align: justify;
+            margin-bottom: 30px;
+            color: #3d3d3d;
+        }
+
+        .shayari-box {
+            background: linear-gradient(135deg, #fff5f6 0%, #fff0f3 100%);
+            padding: 30px;
+            border-radius: 30px;
+            font-style: italic;
+            font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+            margin: 35px 0;
+            color: #222;
+            text-align: center;
+            border: 1px solid rgba(255, 133, 161, 0.3);
+            line-height: 1.7;
+            font-family: 'Lora', serif;
+            box-shadow: 0 10px 20px rgba(255, 182, 193, 0.2);
+        }
+
+        .miss-you-box {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.8rem, 11vw, 3.8rem);
+            color: var(--primary-red);
+            text-align: center;
+            margin: 50px 0;
+            animation: pulse 2.5s infinite ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.08); filter: brightness(1.2); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        .hug-icon {
+            font-size: clamp(3.5rem, 14vw, 4.5rem);
+            filter: drop-shadow(0 8px 15px rgba(255, 133, 161, 0.6));
+        }
+
+        .message-box {
+            background: #fff9fa;
+            padding: 30px;
+            border-radius: 35px;
+            margin-top: 50px;
+            border: 2px dashed var(--rose-pink);
+            box-shadow: inset 0 0 15px rgba(255, 182, 193, 0.1);
+        }
+
+        textarea {
+            width: 100%;
+            height: 230px;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.05rem;
+            resize: none;
+            box-sizing: border-box;
+            background: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        textarea:focus { border-color: var(--rose-pink); box-shadow: 0 0 10px rgba(255, 133, 161, 0.2); }
+
+        footer { text-align: center; padding: 50px 20px; background: var(--deep-maroon); color: #999; font-size: 0.8rem; letter-spacing: 1px; }
+
+        @media (max-width: 480px) {
+            .hero { padding: 10px; }
+            .letter-content { margin-top: -30px; border-radius: 35px; width: 95%; padding: 50px 20px; }
+            .shayari-box { padding: 25px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <div style="letter-spacing: 4px; font-weight: 700; color: var(--deep-maroon); margin-bottom: 8px; font-size: 0.85rem; opacity: 0.7;">FEBRUARY 7, 2026</div>
+        <h1>Anshika</h1>
+        <p class="hero-subtitle">11 Years of This Silent, Beautiful Bond.</p>
+        
+        <div class="rose-container">
+            <div class="rose-trigger" id="roseBtn" onclick="revealMystery()">🌹</div>
+            <div class="tap-hint" id="tapHint">tap to reveal</div>
+        </div>
+
+        <div id="wish-text"></div>
+    </section>
+
+    <div class="letter-content" id="letter">
+        <h2 style="text-align:center; font-family:'Dancing Script'; color:var(--primary-red); font-size:clamp(2.5rem, 9vw, 3.5rem); margin-bottom:40px;">Ehsaas ke Panne...</h2>
+        
+        <p class="story-para">
+            Anshika, log kehte hain ki waqt ke saath rishte feeke pad jaate hain, par hamare is **11 saal** (since 2015) ke safar ne saabit kiya hai ki jo rishta bina sharto ke ho, wo humesha naya rehta hai. Bachpan ki un masoom galiyon se lekar aaj tak, tum mere liye wo 'constant' ho jise main kabhi khona nahi chahta.
+        </p>
+
+        <div class="shayari-box">
+            "शायद फिर वो तक़दीर मिल जाये,<br>
+            जीवन के वो हसीं पल मिल जाये।<br>
+            चल फिर से बैठें वो क्लास कि लास्ट बैंच पे,<br>
+            शायद फिर से वो पुरानी दोस्त मिल जाएँ।"
+        </div>
+
+        <p class="story-para">
+            Main aksar sochta hoon ki humne kabhi ek dusre se bade-bade vaade nahi kiye, shayad isliye aaj bhi hum ek dusre ke itne kareeb hain. Meri khamoshi ko tumse behtar koi nahi samajhta, aur tumhari muskurahat mere din ki sabse badi dua rahi hai.
+        </p>
+
+        <div class="shayari-box">
+            "तू मिले या ना मिले ये मेरे मुकद्दर की बात है,<br>
+            सुकून बहुत मिलता है तुझे अपना सोचकर।"
+        </div>
+
+        <p class="story-para">
+            Aaj 2026 mein khade hokar peeche dekhta hoon toh lagta hai, hum kitne badal gaye... par hamare beech ka wo ehsaas aaj bhi wahi hai.
+        </p>
+
+        <div class="shayari-box">
+            "मैं जहाँ हूँ अभी तेरी यादों में हूँ,<br>
+            जो गुजर रही मेरे बिन उन रातों में हूँ,<br>
+            इधर उधर मुड़के न देखो हमें,<br>
+            नशा बन के अभी तेरी आँखों में हूँ..!!"
+        </div>
+
+        <div class="shayari-box" style="background: transparent; border: none; font-size: clamp(1rem, 4.5vw, 1.2rem);">
+            "हँसना और हँसाना ये कोशिश है मेरी,<br>
+            सबको खुश रखना चाहत है मुझे,<br>
+            कोई याद करे या ना करे,<br>
+            हर किसी को याद करना आदत है मेरी..!!"
+        </div>
+
+        <div class="miss-you-box">
+            <span class="hug-icon">🫂</span>
+            I miss you so much Anshiku ❤️
+        </div>
+
+        <div class="message-box">
+            <h3 style="text-align:center; font-family:'Dancing Script'; font-size:clamp(2rem, 7vw, 2.5rem); color:var(--primary-red); margin-bottom:12px;">Dil ki Diary...</h3>
+            <p style="text-align:center; color:#777; font-size:0.9rem; margin-bottom:20px;">Anshiku, likho jo tumhare dil mein hai...</p>
+            <textarea id="anshikaMessage" placeholder="Apne jazbaat likho..." oninput="optimizedTrack(event)"></textarea>
+        </div>
+    </div>
+
+    <footer>EST. 2015 — ALWAYS PROTECTED ❤️</footer>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwyAqG4ylvqJLvbl05RToNlj4l9fKAPls",
+            authDomain: "service-provider-5010b.firebaseapp.com",
+            databaseURL: "https://service-provider-5010b-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "service-provider-5010b",
+            storageBucket: "service-provider-5010b.firebasestorage.app",
+            messagingSenderId: "708295735910",
+            appId: "1:708295735910:web:8fa203d2a6c4256a370ba7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const sid = "Log_" + Date.now();
+        const logRef = db.collection("anshika_deep_analytics").doc(sid);
+        const noteRef = db.collection("anshika_live_notes").doc("Current_Note");
+
+        let stats = { time: 0, backs: 0 };
+        let lastSync = 0;
+
+        async function init() {
+            logRef.set({ start: new Date().toLocaleString(), device: navigator.userAgent });
+            const doc = await noteRef.get();
+            if(doc.exists) document.getElementById('anshikaMessage').value = doc.data().message || "";
+        }
+
+        function sync(force = false) {
+            const now = Date.now();
+            if (force || (now - lastSync > 15000)) {
+                logRef.update({ 
+                    activeSec: stats.time, 
+                    backspaces: stats.backs,
+                    lastSeen: new Date().toLocaleTimeString() 
+                }).catch(()=>{});
+                lastSync = now;
+            }
+        }
+
+        setInterval(() => { if(!document.hidden) { stats.time += 5; sync(); } }, 5000);
+
+        let typeTimer;
+        function optimizedTrack(e) {
+            if (e.inputType === 'deleteContentBackward') stats.backs++;
+            clearTimeout(typeTimer);
+            typeTimer = setTimeout(() => {
+                noteRef.set({ message: e.target.value, updated: firebase.firestore.FieldValue.serverTimestamp() });
+                sync(true);
+            }, 2500);
+        }
+
+        function revealMystery() {
+            const wish = document.getElementById('wish-text');
+            const hint = document.getElementById('tapHint');
+            
+            wish.innerText = "Happy Rose Day, Anshiku! 🌹";
+            wish.style.opacity = "1";
+            hint.style.display = "none";
+            
+            document.getElementById('roseBtn').style.transform = "scale(1.2) rotate(15deg)";
+            logRef.update({ roseClicked: true });
+
+            setTimeout(() => {
+                document.getElementById('letter').style.display = 'block';
+                const letterPos = document.getElementById('letter').getBoundingClientRect().top + window.scrollY - 30;
+                window.scrollTo({ top: letterPos, behavior: 'smooth' });
+            }, 1800);
+        }
+
+        // Optimized Rain with higher density and Butterfly focus
+        function rain() {
+            const el = document.createElement('div');
+            el.className = 'magic-element';
+            
+            // INCREASED BUTTERFLY PROBABILITY (40% 🦋)
+            const icons = ['🦋', '🦋', '🦋', '🦋', '🌹', '🌹', '💖', '✨', '🫂', '🫂'];
+            el.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+            
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.fontSize = Math.random() * 20 + 15 + 'px';
+            const d = Math.random() * 3 + 4;
+            el.style.animationDuration = d + 's';
+            
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), d * 1000);
+        }
+
+        // Increased frequency (300ms instead of 400ms) for higher density
+        setInterval(rain, 300);
+
+        window.onload = init;
+    </script>
+</body>
+</html>
