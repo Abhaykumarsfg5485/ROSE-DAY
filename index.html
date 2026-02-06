@@ -108,8 +108,6 @@
             animation: float 3.5s infinite ease-in-out;
         }
 
-        .rose-trigger:active { transform: scale(0.9); }
-
         .tap-hint {
             font-size: 0.85rem;
             color: var(--primary-red);
@@ -223,8 +221,6 @@
             transition: 0.3s;
         }
 
-        textarea:focus { border-color: var(--rose-pink); box-shadow: 0 0 10px rgba(255, 133, 161, 0.2); }
-
         footer { text-align: center; padding: 50px 20px; background: var(--deep-maroon); color: #999; font-size: 0.8rem; letter-spacing: 1px; }
 
         @media (max-width: 480px) {
@@ -237,7 +233,7 @@
 <body>
 
     <audio id="bgMusic" loop>
-        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+        <source src="https://www.pagalworld.com.sb/files/download/id/2533" type="audio/mpeg">
     </audio>
 
     <section class="hero">
@@ -247,7 +243,7 @@
         
         <div class="rose-container">
             <div class="rose-trigger" id="roseBtn" onclick="handleInteraction()">🌹</div>
-            <div class="tap-hint" id="tapHint">tap or shake to reveal</div>
+            <div class="tap-hint" id="tapHint">tap or shake to reveal music 🎵</div>
         </div>
 
         <div id="wish-text"></div>
@@ -317,7 +313,7 @@
     <footer>EST. 2015 — ALWAYS PROTECTED ❤️</footer>
 
     <script>
-        // --- Firebase Config ---
+        // --- Firebase & Stats Config ---
         const firebaseConfig = {
             apiKey: "AIzaSyBwyAqG4ylvqJLvbl05RToNlj4l9fKAPls",
             authDomain: "service-provider-5010b.firebaseapp.com",
@@ -343,12 +339,10 @@
             logRef.set({ start: new Date().toLocaleString(), device: navigator.userAgent });
             const doc = await noteRef.get();
             if(doc.exists) document.getElementById('anshikaMessage').value = doc.data().message || "";
-            
-            // Start Shake Detection
             initShakeDetection();
         }
 
-        // --- Shake Detection Logic ---
+        // --- Shake Logic ---
         function initShakeDetection() {
             if (window.DeviceMotionEvent) {
                 window.addEventListener('devicemotion', deviceMotionHandler, false);
@@ -356,59 +350,45 @@
         }
 
         let lastX, lastY, lastZ;
-        let shakeThreshold = 15; 
+        let shakeThreshold = 18; // Sensivity adjust for Agar Tum Saath Ho effect
 
         function deviceMotionHandler(event) {
-            let acceleration = event.accelerationIncludingGravity;
-            let curX = acceleration.x;
-            let curY = acceleration.y;
-            let curZ = acceleration.z;
+            let acc = event.accelerationIncludingGravity;
+            if (!acc.x) return;
 
             if (lastX !== undefined) {
-                let deltaX = Math.abs(lastX - curX);
-                let deltaY = Math.abs(lastY - curY);
-                let deltaZ = Math.abs(lastZ - curZ);
-
-                if (deltaX > shakeThreshold || deltaY > shakeThreshold || deltaZ > shakeThreshold) {
+                let change = Math.abs(lastX - acc.x) + Math.abs(lastY - acc.y) + Math.abs(lastZ - acc.z);
+                if (change > shakeThreshold) {
                     handleShakeAction();
                 }
             }
-            lastX = curX; lastY = curY; lastZ = curZ;
+            lastX = acc.x; lastY = acc.y; lastZ = acc.z;
         }
 
         function handleShakeAction() {
             const rose = document.getElementById('roseBtn');
             rose.classList.add('shake-element');
             
-            // Music start on shake
             if(!audioStarted) {
-                document.getElementById('bgMusic').play().catch(() => {});
+                const music = document.getElementById('bgMusic');
+                music.play().catch(e => console.log("Audio block: Tap required first"));
                 audioStarted = true;
             }
 
-            // If not revealed yet, reveal it on shake
-            if(!isRevealed) {
-                revealMystery();
-            }
+            if(!isRevealed) revealMystery();
 
             setTimeout(() => {
                 rose.classList.remove('shake-element');
-            }, 1000);
+            }, 800);
         }
 
-        // Combined Trigger for Click & Permissions
+        // Click interaction also triggers music/reveal
         function handleInteraction() {
-            // Request permission for iOS users
             if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                DeviceMotionEvent.requestPermission().then(permissionState => {
-                    if (permissionState === 'granted') {
-                        initShakeDetection();
-                    }
-                });
+                DeviceMotionEvent.requestPermission();
             }
-            
             if(!audioStarted) {
-                document.getElementById('bgMusic').play().catch(() => {});
+                document.getElementById('bgMusic').play();
                 audioStarted = true;
             }
             revealMystery();
@@ -417,44 +397,33 @@
         function revealMystery() {
             if(isRevealed) return;
             isRevealed = true;
-
             const wish = document.getElementById('wish-text');
             const hint = document.getElementById('tapHint');
-            
             wish.innerText = "Happy Rose Day, Anshiku! 🌹";
             wish.style.opacity = "1";
             hint.style.display = "none";
-            
             document.getElementById('roseBtn').style.transform = "scale(1.2) rotate(15deg)";
             logRef.update({ roseClicked: true });
-
             setTimeout(() => {
                 document.getElementById('letter').style.display = 'block';
-                const letterPos = document.getElementById('letter').getBoundingClientRect().top + window.scrollY - 30;
-                window.scrollTo({ top: letterPos, behavior: 'smooth' });
+                window.scrollTo({ top: document.getElementById('letter').offsetTop - 30, behavior: 'smooth' });
             }, 1800);
         }
 
-        // --- Other Functions (Existing) ---
+        // --- Utils ---
         function sync(force = false) {
             const now = Date.now();
             if (force || (now - lastSync > 15000)) {
-                logRef.update({ 
-                    activeSec: stats.time, 
-                    backspaces: stats.backs,
-                    lastSeen: new Date().toLocaleTimeString() 
-                }).catch(()=>{});
+                logRef.update({ activeSec: stats.time, lastSeen: new Date().toLocaleTimeString() });
                 lastSync = now;
             }
         }
-
         setInterval(() => { if(!document.hidden) { stats.time += 5; sync(); } }, 5000);
 
-        let typeTimer;
         function optimizedTrack(e) {
             if (e.inputType === 'deleteContentBackward') stats.backs++;
-            clearTimeout(typeTimer);
-            typeTimer = setTimeout(() => {
+            clearTimeout(window.typeTimer);
+            window.typeTimer = setTimeout(() => {
                 noteRef.set({ message: e.target.value, updated: firebase.firestore.FieldValue.serverTimestamp() });
                 sync(true);
             }, 2500);
@@ -463,16 +432,14 @@
         function rain() {
             const el = document.createElement('div');
             el.className = 'magic-element';
-            const icons = ['🦋', '🦋', '🦋', '🦋', '🌹', '🌹', '💖', '✨', '🫂', '🫂'];
+            const icons = ['🦋', '🦋', '🌹', '💖', '✨'];
             el.innerHTML = icons[Math.floor(Math.random() * icons.length)];
             el.style.left = Math.random() * 100 + 'vw';
-            el.style.fontSize = Math.random() * 20 + 15 + 'px';
             const d = Math.random() * 3 + 4;
             el.style.animationDuration = d + 's';
             document.body.appendChild(el);
             setTimeout(() => el.remove(), d * 1000);
         }
-
         setInterval(rain, 300);
         window.onload = init;
     </script>
