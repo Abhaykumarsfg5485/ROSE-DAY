@@ -17,178 +17,425 @@
         }
 
         body {
-            margin: 0; padding: 0; background-color: #fff0f3;
-            font-family: 'Poppins', sans-serif; color: #333;
-            overflow-x: hidden; scroll-behavior: smooth;
+            margin: 0;
+            padding: 0;
+            background-color: #fff0f3;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- Question Screen --- */
-        #auth-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff0f3; z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .auth-card {
-            background: white; padding: 40px 30px; border-radius: 35px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1); width: 85%; max-width: 400px; text-align: center;
-        }
-        .auth-card h2 { font-family: 'Dancing Script'; color: var(--primary-red); font-size: 2.2rem; }
-        .auth-card input {
-            width: 100%; padding: 15px; border: 2px solid #ffcad4; border-radius: 15px;
-            text-align: center; margin-bottom: 20px; outline: none; font-size: 1.1rem;
-        }
-        .auth-card button {
-            background: var(--primary-red); color: white; border: none;
-            padding: 15px 40px; border-radius: 50px; font-weight: 600; cursor: pointer;
+        /* Shake Animation for Rose Icon */
+        .shake-element {
+            animation: shake-animation 0.6s ease-in-out infinite !important;
         }
 
-        /* --- Photos --- */
-        .photo-album {
-            display: flex; justify-content: space-around; gap: 10px; margin-bottom: 30px;
-        }
-        .album-img {
-            width: 30%; border-radius: 15px; border: 3px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        @keyframes shake-animation {
+            0% { transform: rotate(0deg) scale(1.2); }
+            20% { transform: rotate(15deg) scale(1.3); }
+            40% { transform: rotate(-15deg) scale(1.3); }
+            60% { transform: rotate(10deg) scale(1.25); }
+            80% { transform: rotate(-10deg) scale(1.25); }
+            100% { transform: rotate(0deg) scale(1.2); }
         }
 
-        /* --- Main UI --- */
-        #main-content { display: none; }
-        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .rose-trigger { font-size: 80px; cursor: pointer; transition: 0.4s; animation: float 3.5s infinite ease-in-out; }
+        /* Rain Animation */
+        .magic-element {
+            position: fixed;
+            top: -10%;
+            z-index: 1000;
+            pointer-events: none;
+            animation: fall linear forwards;
+            filter: drop-shadow(0 0 5px var(--soft-glow));
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg) scale(0.5); opacity: 0; }
+            15% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(450deg) scale(1.3); opacity: 0; }
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(255,240,243,0.94) 0%, rgba(255,182,193,0.6) 100%),
+                        url('https://images.unsplash.com/photo-1518111326490-4497a61d6706?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(3.2rem, 14vw, 8rem);
+            color: var(--primary-red);
+            margin: 0;
+            line-height: 1.1;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .hero-subtitle {
+            font-family: 'Lora';
+            font-style: italic;
+            font-size: clamp(1rem, 4.5vw, 1.5rem);
+            color: #555;
+            margin-top: 15px;
+            padding: 0 10px;
+            font-weight: 500;
+        }
+
+        .rose-container {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .rose-trigger {
+            font-size: clamp(70px, 25vw, 110px);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 15px 25px rgba(208, 0, 0, 0.4));
+            animation: float 3.5s infinite ease-in-out;
+        }
+
+        .tap-hint {
+            font-size: 0.85rem;
+            color: var(--primary-red);
+            margin-top: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.2; transform: scale(0.95); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        
-        .letter-content { width: 92%; max-width: 850px; margin: -50px auto 50px auto; background: white; padding: 50px 30px; border-radius: 45px; box-shadow: 0 40px 80px rgba(0,0,0,0.1); display: none; position: relative; z-index: 20; }
-        .story-para { font-family: 'Lora', serif; font-size: 1.15rem; line-height: 1.9; text-align: justify; margin-bottom: 30px; color: #3d3d3d; }
-        .shayari-box { background: #fff5f6; padding: 30px; border-radius: 30px; font-style: italic; text-align: center; margin: 35px 0; border: 1px solid #ffcad4; font-family: 'Lora', serif; }
-        .magic-element { position: fixed; top: -10%; pointer-events: none; animation: fall linear forwards; }
-        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
-        
-        textarea { width: 100%; height: 200px; padding: 20px; border-radius: 20px; border: 1px solid #ffcad4; outline: none; }
-        footer { text-align: center; padding: 50px; background: var(--deep-maroon); color: #999; }
+
+        #wish-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2rem, 9vw, 3.2rem);
+            color: var(--primary-red);
+            margin-top: 25px;
+            min-height: 70px;
+            opacity: 0;
+            transition: 1.2s;
+            padding: 0 15px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.05);
+        }
+
+        .letter-content {
+            width: 92%;
+            max-width: 850px;
+            margin: -50px auto 50px auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(45px, 10vw, 90px) clamp(25px, 6vw, 50px);
+            border-radius: 45px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 20;
+            display: none;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .story-para {
+            font-family: 'Lora', serif;
+            font-size: clamp(1.05rem, 4.8vw, 1.35rem);
+            line-height: 1.9;
+            text-align: justify;
+            margin-bottom: 30px;
+            color: #3d3d3d;
+        }
+
+        .shayari-box {
+            background: linear-gradient(135deg, #fff5f6 0%, #fff0f3 100%);
+            padding: 30px;
+            border-radius: 30px;
+            font-style: italic;
+            font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+            margin: 35px 0;
+            color: #222;
+            text-align: center;
+            border: 1px solid rgba(255, 133, 161, 0.3);
+            line-height: 1.7;
+            font-family: 'Lora', serif;
+            box-shadow: 0 10px 20px rgba(255, 182, 193, 0.2);
+        }
+
+        .miss-you-box {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.8rem, 11vw, 3.8rem);
+            color: var(--primary-red);
+            text-align: center;
+            margin: 50px 0;
+            animation: pulse 2.5s infinite ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.08); filter: brightness(1.2); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        .hug-icon {
+            font-size: clamp(3.5rem, 14vw, 4.5rem);
+            filter: drop-shadow(0 8px 15px rgba(255, 133, 161, 0.6));
+        }
+
+        .message-box {
+            background: #fff9fa;
+            padding: 30px;
+            border-radius: 35px;
+            margin-top: 50px;
+            border: 2px dashed var(--rose-pink);
+            box-shadow: inset 0 0 15px rgba(255, 182, 193, 0.1);
+        }
+
+        textarea {
+            width: 100%;
+            height: 230px;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.05rem;
+            resize: none;
+            box-sizing: border-box;
+            background: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        footer { text-align: center; padding: 50px 20px; background: var(--deep-maroon); color: #999; font-size: 0.8rem; letter-spacing: 1px; }
+
+        @media (max-width: 480px) {
+            .hero { padding: 10px; }
+            .letter-content { margin-top: -30px; border-radius: 35px; width: 95%; padding: 50px 20px; }
+            .shayari-box { padding: 25px 15px; }
+        }
     </style>
 </head>
 <body>
-
-    <div id="auth-overlay">
-        <div class="auth-card">
-            <h2>Anshiku, Pehle ye batao...</h2>
-            <p style="color:#777; margin-bottom: 20px;">What is your date of birth?</p>
-            <input type="text" id="dobInput" placeholder="Ex: 25 Jun 2006">
-            <button onclick="checkDOB()">Enter My World ✨</button>
-            <p id="errorMsg" style="color: red; font-size: 0.8rem; margin-top: 10px; display: none;">Galat tareekh hai! 🥺</p>
-        </div>
-    </div>
 
     <audio id="bgMusic" loop>
         <source src="https://www.pagalworld.com.sb/files/download/id/2533" type="audio/mpeg">
     </audio>
 
-    <div id="main-content">
-        <section class="hero">
-            <h1 style="font-family: 'Dancing Script'; font-size: 5rem; color: var(--primary-red); margin:0;">Anshika</h1>
-            <p style="font-style: italic; color: #555;">11 Years of This Silent, Beautiful Bond.</p>
+    <section class="hero">
+        <div style="letter-spacing: 4px; font-weight: 700; color: var(--deep-maroon); margin-bottom: 8px; font-size: 0.85rem; opacity: 0.7;">FEBRUARY 7, 2026</div>
+        <h1>Anshika</h1>
+        <p class="hero-subtitle">11 Years of This Silent, Beautiful Bond.</p>
+        
+        <div class="rose-container">
             <div class="rose-trigger" id="roseBtn" onclick="handleInteraction()">🌹</div>
-            <p id="tapHint" style="color: var(--primary-red); font-weight: 600; margin-top: 15px;">TAP OR SHAKE FOR MUSIC</p>
-            <div id="wish-text" style="font-family: 'Dancing Script'; font-size: 2.5rem; color: var(--primary-red); opacity:0; transition: 1s;">Happy Rose Day, Anshiku! 🌹</div>
-        </section>
-
-        <div class="letter-content" id="letter">
-            <h2 style="text-align:center; font-family:'Dancing Script'; color:var(--primary-red); font-size:3rem;">Ehsaas ke Panne...</h2>
-            
-            <div class="photo-album">
-                <img src="anshika/WhatsApp Image 2026-02-06 at 18.03.09.jpeg" class="album-img">
-                <img src="anshika/WhatsApp Image 2026-02-06 at 18.03.08.jpeg" class="album-img">
-                <img src="anshika/WhatsApp Image 2026-02-06 at 18.03.08 (1).jpeg" class="album-img">
-            </div>
-
-            <p class="story-para">Anshika, Pata nahi tum ise kaise logi, par kaafi waqt se mere dimaag mein ek baat chal rahi thi jo mujhe tumse kehni thi. Hum jab pehli baar mile the, tab hum shayad 7-8 saal ke rahe honge. Mujhe nahi pata tumhare liye woh kya tha, par mujhe aaj bhi yaad hai ki pehli baar milte hi mujhe tumse ek ajeeb sa apna-pan feel hua tha.</p>
-
-            <div class="shayari-box">
-                "शायद फिर वो तक़दीर मिल जाये,<br>जीवन के वो हसीं पल मिल जाये।<br>चल फिर से बैठें वो क्लास कि लास्ट बैंच पे,<br>शायद फिर से वो पुरानी दोस्त मिल जाएँ।"
-            </div>
-
-            <p class="story-para">Aaj hum B.Sc final year (5th sem) mein aa gaye hain, lagbhag 8-9 saal beet chuke hain. Is beech hum kitna dur rahe, kitni kam baatein huin, par sach bataun toh ek pal ke liye bhi main tumhe dimaag se nikal nahi paya. Log kehte hain waqt ke saath purani yaadein dhundhli ho jaati hain, par humare case mein sab ulta hai.</p>
-
-            <div class="shayari-box">
-                "तू मिले या ना मिले ये मेरे मुकद्दर की बात है,<br>सुकून बहुत मिलता है तुझे अपना सोचकर।"
-            </div>
-
-            <p class="story-para">Mujhe kabhi-kabhi lagta hai ki ye sab sirf ittefaq nahi ho sakta. Woh jo aksar hota hai na ki jab main tumhe yaad kar raha hota hun, tabhi tumhara contact ho jata hai—ye 70-80% baar hona koi coincidence nahi hai. Aur jab tum bimaar hoti ho ya kisi tension mein hoti ho, toh pata nahi kaise par mujhe yahan bechaini hone lagti hai.</p>
-
-            <div class="shayari-box">
-                "मैं जहाँ हूँ अभी तेरी यादों में हूँ,<br>जो गुजर रही मेरे बिन उन रातों में हूँ..."
-            </div>
-
-            <p class="story-para">Maine is beech bahut log dekhe, bahut se logon se mila. Aisa nahi hai ki tumse sundar ya tumse acche nature wale log nahi mile, par unme woh baat hi nahi thi. Unme "tum" nahi thi. Jo ek sukoon mujhe sirf tumhare baare mein soch kar milta hai, woh aaj tak kisi aur mein feel hi nahi hua.</p>
-
-            <div class="shayari-box">
-                "हँसना और हँसाना ये कोशिश है मेरी,<br>सबको खुश रखना चाहत है मुझे,<br>कोई याद करे या ना करे,<br>हर किसी को याद करना आदत है मेरी..!!"
-            </div>
-
-            <p class="story-para">Ab haal ye hai ki tumhe bhulna mere bas ki baat nahi rahi, aur shayad main kabhi bhulna chahta bhi nahi hun. Bas dil mein aaya ki tumhe bata dun ki tum mere liye kitni special ho.</p>
-
-            <div style="text-align: center; margin: 40px 0;">
-                <span style="font-size: 4rem;">🫂</span>
-                <p style="font-family: 'Dancing Script'; font-size: 3rem; color: var(--primary-red);">I miss you so much Anshiku ❤️</p>
-            </div>
-
-            <div style="background: #fff9fa; padding: 30px; border-radius: 35px; border: 2px dashed var(--rose-pink);">
-                <h3 style="text-align:center; font-family:'Dancing Script'; color:var(--primary-red);">Dil ki Diary...</h3>
-                <textarea id="anshikaMessage" placeholder="Apne jazbaat likho..." oninput="optimizedTrack(event)"></textarea>
-            </div>
+            <div class="tap-hint" id="tapHint">Tap or Shake phone for music 🎵</div>
         </div>
-        <footer>EST. 2015 — ALWAYS PROTECTED ❤️</footer>
+
+        <div id="wish-text"></div>
+    </section>
+
+    <div class="letter-content" id="letter">
+        <h2 style="text-align:center; font-family:'Dancing Script'; color:var(--primary-red); font-size:clamp(2.5rem, 9vw, 3.5rem); margin-bottom:40px;">Ehsaas ke Panne...</h2>
+        
+        <p class="story-para">
+            Anshika, Pata nahi tum ise kaise logi, par kaafi waqt se mere dimaag mein ek baat chal rahi thi jo mujhe tumse kehni thi. Hum jab pehli baar mile the, tab hum shayad 7-8 saal ke rahe honge. Mujhe nahi pata tumhare liye woh kya tha, par mujhe aaj bhi yaad hai ki pehli baar milte hi mujhe tumse ek ajeeb sa apna-pan feel hua tha.
+        </p>
+
+        <div class="shayari-box">
+            "शायद फिर वो तक़दीर मिल जाये,<br>
+            जीवन के वो हसीं पल मिल जाये।<br>
+            चल फिर से बैठें वो क्लास कि लास्ट बैंच पे,<br>
+            शायद फिर से वो पुरानी दोस्त मिल जाएँ।"
+        </div>
+
+        <p class="story-para">
+           Aaj hum B.Sc final year (5th sem) mein aa gaye hain, lagbhag 8-9 saal beet chuke hain. Is beech hum kitna dur rahe, kitni kam baatein huin, par sach bataun toh ek pal ke liye bhi main tumhe dimaag se nikal nahi paya. Log kehte hain waqt ke saath purani yaadein dhundhli ho jaati hain, par humare case mein sab ulta hai.
+        </p>
+
+        <div class="shayari-box">
+            "तू मिले या ना मिले ये मेरे मुकद्दर की बात है,<br>
+            सुकून बहुत मिलता है तुझे अपना सोचकर।"
+        </div>
+
+        <p class="story-para">
+            Mujhe kabhi-kabhi lagta hai ki ye sab sirf ittefaq nahi ho sakta. Woh jo aksar hota hai na ki jab main tumhe yaad kar raha hota hun, tabhi tumhara contact ho jata hai—ye 70-80% baar hona koi coincidence nahi hai. Aur jab tum bimaar hoti ho ya kisi tension mein hoti ho, toh pata nahi kaise par mujhe yahan bechaini hone lagti hai. Jaise tumhara dard mujhe direct feel ho raha ho.
+        </p>
+
+        <div class="shayari-box">
+            "मैं जहाँ हूँ अभी तेरी यादों में हूँ,<br>
+            जो गुजर रही मेरे बिन उन रातों में हूँ,<br>
+            इधर उधर मुड़के न देखो हमें,<br>
+            नशा बन के अभी तेरी आँखों में हूँ..!!"
+        </div>
+
+        <p class="story-para">
+            Maine is beech bahut log dekhe, bahut se logon se mila. Aisa nahi hai ki tumse sundar ya tumse acche nature wale log nahi mile, par unme woh baat hi nahi thi. Unme "tum" nahi thi. Jo ek sukoon mujhe sirf tumhare baare mein soch kar milta hai, woh aaj tak kisi aur mein feel hi nahi hua.
+        </p>
+
+        <div class="shayari-box" style="background: transparent; border: none; font-size: clamp(1rem, 4.5vw, 1.2rem);">
+            "हँसना और हँसाना ये कोशिश है मेरी,<br>
+            सबको खुश रखना चाहत है मुझे,<br>
+            कोई याद करे या ना करे,<br>
+            हर किसी को याद करना आदत है मेरी..!!"
+        </div>
+
+        <p class="story-para">
+            Ab haal ye hai ki tumhe bhulna mere bas ki baat nahi rahi, aur shayad main kabhi bhulna chahta bhi nahi hun. Bas dil mein aaya ki tumhe bata dun ki tum mere liye kitni special ho.
+        </p>
+
+        <div class="miss-you-box">
+            <span class="hug-icon">🫂</span>
+            I miss you so much Anshiku ❤️
+        </div>
+
+        <div class="message-box">
+            <h3 style="text-align:center; font-family:'Dancing Script'; font-size:clamp(2rem, 7vw, 2.5rem); color:var(--primary-red); margin-bottom:12px;">Dil ki Diary...</h3>
+            <p style="text-align:center; color:#777; font-size:0.9rem; margin-bottom:20px;">Anshiku, likho jo tumhare dil mein hai...</p>
+            <textarea id="anshikaMessage" placeholder="Apne jazbaat likho..." oninput="optimizedTrack(event)"></textarea>
+        </div>
     </div>
 
+    <footer>EST. 2015 — ALWAYS PROTECTED ❤️</footer>
+
     <script>
-        // --- DOB Verification ---
-        function checkDOB() {
-            const input = document.getElementById('dobInput').value.toLowerCase().trim();
-            if(input === "25 jun 2006") {
-                document.getElementById('auth-overlay').style.display = "none";
-                document.getElementById('main-content').style.display = "block";
-                initShake();
-            } else { document.getElementById('errorMsg').style.display = "block"; }
-        }
+        // --- Firebase Config (Do not change) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwyAqG4ylvqJLvbl05RToNlj4l9fKAPls",
+            authDomain: "service-provider-5010b.firebaseapp.com",
+            databaseURL: "https://service-provider-5010b-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "service-provider-5010b",
+            storageBucket: "service-provider-5010b.firebasestorage.app",
+            messagingSenderId: "708295735910",
+            appId: "1:708295735910:web:8fa203d2a6c4256a370ba7"
+        };
 
-        // --- Core Logic ---
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const sid = "Log_" + Date.now();
+        const logRef = db.collection("anshika_deep_analytics").doc(sid);
+        const noteRef = db.collection("anshika_live_notes").doc("Current_Note");
+
+        let stats = { time: 0, backs: 0 };
+        let lastSync = 0;
+        let isRevealed = false;
         let audioStarted = false;
-        function handleInteraction() {
-            if(!audioStarted) { document.getElementById('bgMusic').play(); audioStarted = true; }
-            document.getElementById('wish-text').style.opacity = "1";
-            document.getElementById('tapHint').style.display = "none";
-            setTimeout(() => {
-                document.getElementById('letter').style.display = 'block';
-                window.scrollTo({ top: document.getElementById('letter').offsetTop - 20, behavior: 'smooth' });
-            }, 1000);
-        }
+        const audio = document.getElementById('bgMusic');
+        const roseBtn = document.getElementById('roseBtn');
 
-        function initShake() {
-            let lastX, lastY;
-            window.addEventListener('devicemotion', (e) => {
-                let acc = e.accelerationIncludingGravity;
-                if(acc && Math.abs(acc.x - lastX) > 20) { handleInteraction(); }
-                lastX = acc.x; lastY = acc.y;
-            });
-        }
-
-        // --- Rain effect ---
-        setInterval(() => {
-            if(document.getElementById('main-content').style.display === "block") {
-                const el = document.createElement('div');
-                el.className = 'magic-element'; el.innerHTML = '🌹';
-                el.style.left = Math.random() * 100 + 'vw';
-                el.style.animationDuration = (Math.random()*3+2) + 's';
-                document.body.appendChild(el);
-                setTimeout(() => el.remove(), 4000);
+        async function init() {
+            logRef.set({ start: new Date().toLocaleString(), device: navigator.userAgent });
+            const doc = await noteRef.get();
+            if(doc.exists) document.getElementById('anshikaMessage').value = doc.data().message || "";
+            
+            // Shake Permission & Setup
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', handleShake, false);
             }
-        }, 400);
-
-        // Firebase Sync (Aapki purani logic)
-        function optimizedTrack(e) { 
-            const noteRef = firebase.firestore().collection("anshika_live_notes").doc("Current_Note");
-            noteRef.set({ message: e.target.value, updated: firebase.firestore.FieldValue.serverTimestamp() });
         }
+
+        // --- Shake Detection ---
+        let lastX, lastY, lastZ;
+        const threshold = 15; 
+
+        function handleShake(event) {
+            let acc = event.accelerationIncludingGravity;
+            if (!acc.x) return;
+
+            let diff = Math.abs(lastX - acc.x) + Math.abs(lastY - acc.y) + Math.abs(lastZ - acc.z);
+            
+            if (diff > threshold) {
+                roseBtn.classList.add('shake-element');
+                startExperience();
+                setTimeout(() => roseBtn.classList.remove('shake-element'), 1000);
+            }
+
+            lastX = acc.x; lastY = acc.y; lastZ = acc.z;
+        }
+
+        // Trigger on Tap
+        function handleInteraction() {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                DeviceMotionEvent.requestPermission();
+            }
+            startExperience();
+        }
+
+        function startExperience() {
+            if(!audioStarted) {
+                audio.play().catch(e => console.log("User interaction required"));
+                audioStarted = true;
+            }
+            if(!isRevealed) revealMystery();
+        }
+
+        function revealMystery() {
+            isRevealed = true;
+            const wish = document.getElementById('wish-text');
+            const hint = document.getElementById('tapHint');
+            
+            wish.innerText = "Happy Rose Day, Anshiku! 🌹";
+            wish.style.opacity = "1";
+            hint.style.display = "none";
+            
+            roseBtn.style.transform = "scale(1.2) rotate(15deg)";
+            logRef.update({ roseClicked: true });
+
+            setTimeout(() => {
+                const letter = document.getElementById('letter');
+                letter.style.display = 'block';
+                window.scrollTo({ top: letter.offsetTop - 30, behavior: 'smooth' });
+            }, 1800);
+        }
+
+        // --- Standard Functions ---
+        function sync(force = false) {
+            const now = Date.now();
+            if (force || (now - lastSync > 15000)) {
+                logRef.update({ activeSec: stats.time, lastSeen: new Date().toLocaleTimeString() });
+                lastSync = now;
+            }
+        }
+        setInterval(() => { if(!document.hidden) { stats.time += 5; sync(); } }, 5000);
+
+        function optimizedTrack(e) {
+            if (e.inputType === 'deleteContentBackward') stats.backs++;
+            clearTimeout(window.t);
+            window.t = setTimeout(() => {
+                noteRef.set({ message: e.target.value, updated: firebase.firestore.FieldValue.serverTimestamp() });
+                sync(true);
+            }, 2500);
+        }
+
+        function rain() {
+            const el = document.createElement('div');
+            el.className = 'magic-element';
+            const icons = ['🦋', '🦋', '🌹', '💖', '✨'];
+            el.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+            el.style.left = Math.random() * 100 + 'vw';
+            const d = Math.random() * 3 + 4;
+            el.style.animationDuration = d + 's';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), d * 1000);
+        }
+        setInterval(rain, 300);
+
+        window.onload = init;
     </script>
 </body>
 </html>
